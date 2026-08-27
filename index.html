@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
 <title>瑪莎肌 B-roll 清單</title>
 <style>
   html, body {
@@ -314,6 +315,7 @@
 })();
 
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0M9_HqI9L8goGq_uOw5RfEeNzOvhOwBtagN3Hn1IZVkP3wld7EuoA_o5HMqzxZPF6Gw/exec';
+var API_KEY = '0eeeae13c54e1cc627e74da05bb0e987759b0380e94e611c';
 
 var items = [];
 var currentTab = 'all';
@@ -418,7 +420,7 @@ async function loadItems(showSpin){
   if(showSpin) btn.classList.add('spin');
   setNote('讀取中…', false);
   try{
-    var res = await fetch(SCRIPT_URL, {method:'GET'});
+    var res = await fetch(SCRIPT_URL + '?key=' + encodeURIComponent(API_KEY), {method:'GET'});
     if(!res.ok) throw new Error('http '+res.status);
     var data = await res.json();
     items = data;
@@ -446,7 +448,7 @@ async function toggleItem(it){
     var res = await fetch(SCRIPT_URL, {
       method: 'POST',
       headers: {'Content-Type': 'text/plain;charset=utf-8'},
-      body: JSON.stringify({id: it.id, done: newDone})
+      body: JSON.stringify({id: it.id, done: newDone, key: API_KEY})
     });
     if(!res.ok) throw new Error('http '+res.status);
     setNote('已同步', false);
@@ -472,7 +474,7 @@ document.getElementById('reset-btn').addEventListener('click', async function(){
       await fetch(SCRIPT_URL, {
         method: 'POST',
         headers: {'Content-Type': 'text/plain;charset=utf-8'},
-        body: JSON.stringify({id: toReset[i].id, done: false})
+        body: JSON.stringify({id: toReset[i].id, done: false, key: API_KEY})
       });
     }catch(e){}
   }
