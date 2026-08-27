@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>瑪莎肌 B-roll 清單</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #1b1a18;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  body {
+    padding: 16px 12px 40px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+</style>
+</head>
+<body>
+<style>
+  :root{
+    --bg:#1b1a18;
+    --frame:#211f1c;
+    --card:#2a2724;
+    --card-border:#3d3934;
+    --text:#f0e9dd;
+    --text-dim:#a39c8f;
+    --amber:#d99a5b;
+    --amber-soft:#3d2e1f;
+    --sage:#8fa583;
+    --sage-fill:#3a4536;
+    --done-bg:#242a23;
+    --err:#c96b5f;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;}
+  .app{
+    max-width:420px;
+    margin:0 auto;
+    background:var(--frame);
+    border-radius:28px;
+    border:1px solid var(--card-border);
+    overflow:hidden;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    color:var(--text);
+  }
+  .topbar{
+    padding:22px 20px 16px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .app-icon{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    background:var(--amber);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .app-icon svg{width:20px;height:20px;}
+  .topbar-text{flex:1;}
+  .topbar-text .app-name{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:20px;
+    letter-spacing:0.5px;
+    line-height:1;
+    margin:0;
+  }
+  .topbar-text .app-sub{
+    font-size:12px;
+    color:var(--text-dim);
+    margin:3px 0 0;
+  }
+  .refresh-btn{
+    background:transparent;
+    border:1px solid var(--card-border);
+    border-radius:10px;
+    width:34px;
+    height:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    color:var(--text-dim);
+    flex-shrink:0;
+  }
+  .refresh-btn svg{width:16px;height:16px;}
+  .refresh-btn.spin svg{animation:spin .8s linear infinite;}
+  @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+  .progress-strip{
+    margin:0 20px 14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .progress-track{
+    flex:1;
+    height:5px;
+    background:#37342f;
+    border-radius:3px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--amber);
+    width:0%;
+    transition:width .3s ease;
+  }
+  .progress-num{
+    font-size:12px;
+    color:var(--text-dim);
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
+  .screen{
+    padding:4px 20px 14px;
+    min-height:320px;
+    max-height:560px;
+    overflow-y:auto;
+  }
+  .state-msg{
+    text-align:center;
+    color:var(--text-dim);
+    font-size:13px;
+    padding:40px 0;
+  }
+  .state-msg.error{color:var(--err);}
+  .group-title{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--text-dim);
+    margin:16px 0 8px;
+    display:flex;
+    justify-content:space-between;
+  }
+  .group-title:first-child{margin-top:4px;}
+  .row{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:14px;
+    padding:12px 14px;
+    margin-bottom:8px;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .row.done{background:var(--done-bg);}
+  .row.pending{opacity:.55;}
+  .check{
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    border:1.5px solid var(--card-border);
+    flex-shrink:0;
+    margin-top:1px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .row.done .check{
+    background:var(--sage-fill);
+    border-color:var(--sage);
+    transform:scale(1.05);
+  }
+  .check svg{width:12px;height:12px;opacity:0;transition:opacity .15s ease;}
+  .row.done .check svg{opacity:1;}
+  .row-text{flex:1;}
+  .row-label{
+    font-size:14px;
+    line-height:1.45;
+  }
+  .row.done .row-label{
+    color:var(--text-dim);
+    text-decoration:line-through;
+  }
+  .row-tags{
+    display:flex;
+    gap:5px;
+    margin-top:5px;
+    flex-wrap:wrap;
+  }
+  .chip{
+    font-size:10px;
+    padding:2px 7px;
+    border-radius:7px;
+    background:#38352f;
+    color:var(--text-dim);
+  }
+  .chip.prep{background:var(--amber-soft);color:var(--amber);}
+  .navbar{
+    display:flex;
+    border-top:1px solid var(--card-border);
+    background:var(--frame);
+    padding:6px 4px calc(env(safe-area-inset-bottom,0px) + 6px);
+    position:sticky;
+    bottom:0;
+  }
+  .navbtn{
+    flex:1;
+    background:transparent;
+    border:none;
+    color:var(--text-dim);
+    font-family:'Inter',sans-serif;
+    font-size:10px;
+    padding:6px 2px 4px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    cursor:pointer;
+    border-radius:10px;
+  }
+  .navbtn svg{width:18px;height:18px;}
+  .navbtn.active{color:var(--amber);}
+  .footer-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 20px 14px;
+    font-size:10px;
+    color:var(--text-dim);
+  }
+  .footer-row.error-state{color:var(--err);}
+  .reset-link{
+    background:none;
+    border:none;
+    color:var(--text-dim);
+    font-size:11px;
+    text-decoration:underline;
+    cursor:pointer;
+    padding:0;
+  }
+</style>
+
+<div class="app">
+  <div class="topbar">
+    <div class="app-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#2a2724" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <div class="topbar-text">
+      <p class="app-name">B-ROLL 清單</p>
+      <p class="app-sub">瑪莎肌・拍攝日</p>
+    </div>
+    <button class="refresh-btn" id="refresh-btn" aria-label="重新整理">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    </button>
+  </div>
+
+  <div class="progress-strip">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <span class="progress-num" id="progress-num">0/0</span>
+  </div>
+
+  <div class="screen" id="screen"><div class="state-msg">載入中…</div></div>
+
+  <div class="navbar" id="navbar"></div>
+  <div class="footer-row" id="footer-row">
+    <span id="sync-note">連線中…</span>
+    <button class="reset-link" id="reset-btn">全部取消勾選</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500&display=swap';
+  document.head.appendChild(link);
+})();
+
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUvDaEDgJA-S7zxcxUmagPMK3ZSSs6ZLcVEqPC3ytIg_V-hfrqQTVCbMcybFHs4wPJng/exec';
+
+var items = [];
+var currentTab = 'all';
+var pendingIds = {};
+
+var TABS = [
+  {key:'all', label:'總覽', icon:'<path d="M4 6h16M4 12h16M4 18h10"/>'},
+  {key:'1', label:'EP1', icon:'<circle cx="12" cy="12" r="9"/><text x="12" y="16" font-size="10" text-anchor="middle" fill="currentColor" stroke="none">1</text>'},
+  {key:'2', label:'EP2', icon:'<circle cx="12" cy="12" r="9"/><text x="12" y="16" font-size="10" text-anchor="middle" fill="currentColor" stroke="none">2</text>'},
+  {key:'3', label:'EP3', icon:'<circle cx="12" cy="12" r="9"/><text x="12" y="16" font-size="10" text-anchor="middle" fill="currentColor" stroke="none">3</text>'},
+  {key:'4', label:'EP4', icon:'<circle cx="12" cy="12" r="9"/><text x="12" y="16" font-size="10" text-anchor="middle" fill="currentColor" stroke="none">4</text>'},
+  {key:'5', label:'EP5', icon:'<circle cx="12" cy="12" r="9"/><text x="12" y="16" font-size="10" text-anchor="middle" fill="currentColor" stroke="none">5</text>'}
+];
+
+function renderNavbar(){
+  var nav = document.getElementById('navbar');
+  nav.innerHTML = '';
+  TABS.forEach(function(t){
+    var btn = document.createElement('button');
+    btn.className = 'navbtn' + (currentTab===t.key ? ' active' : '');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+t.icon+'</svg><span>'+t.label+'</span>';
+    btn.onclick = function(){ currentTab = t.key; renderNavbar(); renderScreen(); };
+    nav.appendChild(btn);
+  });
+}
+
+function parseEps(str){
+  return String(str).split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+}
+
+function itemsForTab(){
+  if(currentTab === 'all') return items;
+  return items.filter(function(it){ return parseEps(it.eps).indexOf(currentTab) !== -1; });
+}
+
+function groupInfo(groupField){
+  var key = String(groupField).trim().charAt(0);
+  var title = String(groupField).trim().slice(2);
+  return {key: key, title: title};
+}
+
+function renderScreen(){
+  var screen = document.getElementById('screen');
+  screen.innerHTML = '';
+  var visItems = itemsForTab();
+  var byGroup = {};
+  var order = [];
+  visItems.forEach(function(it){
+    var g = groupInfo(it.group);
+    if(!byGroup[g.key]){ byGroup[g.key] = {title: g.title, items: []}; order.push(g.key); }
+    byGroup[g.key].items.push(it);
+  });
+  order.sort();
+  order.forEach(function(key){
+    var g = byGroup[key];
+    var doneCount = g.items.filter(function(it){ return it.done === true || it.done === 'TRUE'; }).length;
+
+    var title = document.createElement('div');
+    title.className = 'group-title';
+    title.innerHTML = '<span>'+g.title+'</span><span>'+doneCount+'/'+g.items.length+'</span>';
+    screen.appendChild(title);
+
+    g.items.forEach(function(it){
+      var isDone = it.done === true || it.done === 'TRUE';
+      var isPrep = key === 'H';
+      var row = document.createElement('div');
+      row.className = 'row' + (isDone ? ' done' : '') + (pendingIds[it.id] ? ' pending' : '');
+      var tags = parseEps(it.eps).map(function(n){ return '<span class="chip'+(isPrep?' prep':'')+'">'+(isPrep?'待處理 · ':'')+'EP'+n+'</span>'; }).join('');
+      row.innerHTML =
+        '<div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>' +
+        '<div class="row-text">' +
+          '<div class="row-label">'+it.label+'</div>' +
+          '<div class="row-tags">'+tags+'</div>' +
+        '</div>';
+      row.addEventListener('click', function(){
+        if(pendingIds[it.id]) return;
+        toggleItem(it);
+      });
+      screen.appendChild(row);
+    });
+  });
+}
+
+function renderProgress(){
+  var visItems = itemsForTab();
+  var done = visItems.filter(function(it){ return it.done === true || it.done === 'TRUE'; }).length;
+  var total = visItems.length;
+  var pct = total ? Math.round((done/total)*100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-num').textContent = done + '/' + total;
+}
+
+function setNote(text, isError){
+  var note = document.getElementById('sync-note');
+  var row = document.getElementById('footer-row');
+  note.textContent = text;
+  row.className = 'footer-row' + (isError ? ' error-state' : '');
+}
+
+async function loadItems(showSpin){
+  var btn = document.getElementById('refresh-btn');
+  if(showSpin) btn.classList.add('spin');
+  setNote('讀取中…', false);
+  try{
+    var res = await fetch(SCRIPT_URL, {method:'GET'});
+    if(!res.ok) throw new Error('http '+res.status);
+    var data = await res.json();
+    items = data;
+    renderNavbar();
+    renderScreen();
+    renderProgress();
+    setNote('已連線・剛剛更新', false);
+  }catch(err){
+    if(items.length === 0){
+      document.getElementById('screen').innerHTML = '<div class="state-msg error">連線失敗，無法讀取雲端清單。<br>檢查網路後按右上角重新整理。</div>';
+    }
+    setNote('連線失敗，顯示可能不是最新狀態', true);
+  }
+  if(showSpin) btn.classList.remove('spin');
+}
+
+async function toggleItem(it){
+  var newDone = !(it.done === true || it.done === 'TRUE');
+  it.done = newDone;
+  pendingIds[it.id] = true;
+  renderScreen();
+  renderProgress();
+  setNote('同步中…', false);
+  try{
+    var res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify({id: it.id, done: newDone})
+    });
+    if(!res.ok) throw new Error('http '+res.status);
+    setNote('已同步', false);
+  }catch(err){
+    it.done = !newDone;
+    setNote('同步失敗，已還原這項的勾選', true);
+  }
+  delete pendingIds[it.id];
+  renderScreen();
+  renderProgress();
+}
+
+document.getElementById('refresh-btn').addEventListener('click', function(){
+  loadItems(true);
+});
+
+document.getElementById('reset-btn').addEventListener('click', async function(){
+  if(!confirm('確定要把所有項目取消勾選嗎？這會同步影響所有裝置看到的清單。')) return;
+  setNote('清空中…', false);
+  var toReset = items.filter(function(it){ return it.done === true || it.done === 'TRUE'; });
+  for(var i=0; i<toReset.length; i++){
+    try{
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'text/plain;charset=utf-8'},
+        body: JSON.stringify({id: toReset[i].id, done: false})
+      });
+    }catch(e){}
+  }
+  loadItems(false);
+});
+
+loadItems(false);
+setInterval(function(){ loadItems(false); }, 20000);
+</script>
+
+</body>
+</html>
